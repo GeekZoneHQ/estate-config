@@ -1,0 +1,22 @@
+---
+name: Assign issue to contributor
+on:
+  issue_comment:
+    types: [ created ]
+jobs:
+  assign:
+    name: Take an issue
+    if: ${{ !github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: take the issue
+        uses: geekzonehq/reusable-workflows/.github/workflows/take.yml@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GZBOT_GHPAT_TAKE_ACTION }}
+        with:
+          message: Thanks for taking this issue! Let us know if you have any questions!
+          trigger: /mine
+  tweet:
+    uses: geekzonehq/reusable-workflows/.github/workflows/tweet.yml@main
+    with:
+      message: "${{ github.actor.display_login }} has assigned themself to a Geek.Zone issue! ${{ github.issue.html_url }}"
