@@ -8,7 +8,7 @@
 [//]: # (Match repository name)
 [//]: # (REQUIRED)
 
-#  
+#  estate-config
 
 [//]: # (Banner)
 [//]: # (OPTIONAL)
@@ -75,7 +75,12 @@
 [//]: # (This should not be called "Extra Sections".)
 [//]: # (This is a space for ≥0 sections to be included,)
 [//]: # (each of which must have their own titles.)
+## Geek.Zone GitHub Org Membership
+Membership of the Geek.Zone GitHub org is managed here. OpenTofu runs every 30 minutes to,
+- invite new members to our GitHub
+- remove former members from our GitHub
 
+You will receive an invite from GeekZoneBot. Accept it to continue!
 
 [//]: # (## API)
 [//]: # (OPTIONAL)
