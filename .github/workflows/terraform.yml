@@ -1,0 +1,77 @@
+name: tofu Workflow
+
+## This workflow is not yet ready for triggers as we want
+## to allow Geek.Zone/Dev team members a fair opportunity
+## to renew their Geek.Zone membership.
+# on:
+#  push:
+#    branches:
+#      - main
+#  schedule:
+#    - cron: '*/30 * * * *'
+
+env:
+  HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
+  HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
+  GITHUB_ORGANIZATION: ${{ github.repository_owner }}
+
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - id: create_token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.GEEKZONEBOT_APP_ID }}
+          private_key: ${{ secrets.GEEKZONEBOT_PRIVATE_KEY }}
+
+      - name: Checkout Repository
+        env:
+          GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
+        uses: actions/checkout@v4
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.6.0-alpha1v3
+          tofu_wrapper: false
+          cli_config_credentials_token: ${{ secrets.TFE_ORG_TOKEN }}
+
+      - id: get_membermojo
+        env:
+          GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
+        run: |
+          curl /
+            --cookie cookies.txt /
+            --cookie-jar cookies.txt /
+            --output signin.html /
+            --data 'email=${{ secrets.MEMBERMOJO_EMAIL }}&password=${{ secrets.MEMBERMOJO_PASSWORD }}' /
+            https://membermojo.co.uk/geekzone/signin_password
+          curl /
+            --cookie ${{ secrets.MEMBERMOJO_COOKIE }} /
+            --output members.csv /
+            https://membermojo.co.uk/geekzone/membership/download_members
+          grep -q '"First name","Last name","Preferred Name"' members.csv
+          python3 src/github_members_sync.py
+          python3 src/github_usernames_roles_current.py
+
+      - name: Build tofu Plan
+        env:
+          GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
+        run: |
+          cd terraform
+          tofu init
+          tofu plan -no-color -out=tfplan
+          tofu show -no-color -json tfplan > plan.json
+
+      - name: Setup Conftest
+        uses: instrumenta/conftest-action@master
+        with:
+          files: terraform/plan.json
+
+      - name: tofu Apply
+        env:
+          GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
+        run: tofu apply terraform/tfplan
