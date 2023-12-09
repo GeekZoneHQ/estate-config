@@ -41,8 +41,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
         run: |
+          echo ${{ secrets.MEMBERMOJO_COOKIE }} > cookies.txt
           curl /
-            --cookie ${{ secrets.MEMBERMOJO_COOKIE }} /
+            --cookie cookies.txt /
             --cookie-jar cookies.txt /
             --output signin.html /
             --data 'email=${{ secrets.MEMBERMOJO_EMAIL }}&password=${{ secrets.MEMBERMOJO_PASSWORD }}' /
