@@ -56,7 +56,12 @@ jobs:
           curl --cookie cookies.txt --output members.csv https://membermojo.co.uk/geekzone/membership/download_members
           
           echo "💾 Checking for member data"
-          grep -q '"First name","Last name","Preferred Name"' members.csv && echo "👍 Good member data" || echo "❌ No member data"
+          grep -q '"First name","Last name","Preferred Name"' members.csv && echo "👍 Good member data" || 
+          if grep -q "<!DOCTYPE html>" members.csv; then
+            echo "Error: ❌ Downloaded file is an HTML error page"
+            exit 1
+          fi
+          echo "👍 Good member data"
           
           echo "Updating Membermojo cookie in secrets
           gh secret set MEMBERMOJO_COOKIE --org ${{ github.repository_owner }} < cookies.txt
