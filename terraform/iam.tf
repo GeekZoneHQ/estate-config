@@ -80,11 +80,17 @@ data "aws_iam_policy_document" "github_actions_policy" {
       "iam:GetServiceLastAccessedDetails",
       "iam:ListAttachedRolePolicies",
       "iam:ListRolePolicies",
+      "iam:CreatePolicy",
+      "iam:CreatePolicyVersion",
+      "iam:TagPolicy",
+      "iam:DetachRolePolicy",
+      "iam:ListPolicyVersions",
     ]
     effect = "Allow"
     resources = [
       aws_iam_openid_connect_provider.github_oidc.arn,
       aws_iam_role.github_actions.arn,
+      "*",
     ]
   }
 
