@@ -49,6 +49,11 @@ def read_json_file(file_path):
 
 
 def remove_member(token, org_name, member_to_remove):
+    if member_to_remove == "jamesgeddes":
+        # Hardcoded safeguard
+        print("Can not remove James Geddes")
+        return 0
+
     headers = {'Authorization': f'token {token}'}
     url = f"https://api.github.com/orgs/{org_name}/members/{member_to_remove}"
     response = requests.delete(url, headers=headers)
