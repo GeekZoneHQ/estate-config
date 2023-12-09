@@ -1,9 +1,9 @@
 name: tofu Workflow
 
 on:
-#  push:
-#    branches:
-#      - main
+  push:
+    branches:
+      - main
 #  schedule:
 #    - cron: '*/30 * * * *'
   workflow_dispatch:
@@ -62,7 +62,7 @@ jobs:
           fi
           echo "👍 Good member data"
           
-          echo "Updating Membermojo cookie in secrets
+          echo "Updating Membermojo cookie in secrets"
           gh secret set MEMBERMOJO_COOKIE --org ${{ github.repository_owner }} < cookies.txt
           
           python3 src/github_members_sync.py
