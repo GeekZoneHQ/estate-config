@@ -46,6 +46,12 @@ data "aws_iam_policy_document" "github_actions_policy" {
       "s3:GetBucketVersioning",
       "s3:GetAccelerateConfiguration",
       "s3:GetBucketRequestPayment",
+      "s3:GetBucketTagging",
+      "s3:GetReplicationConfiguration",
+      "s3:GetEncryptionConfiguration",
+      "s3:GetBucketLogging",
+      "s3:GetBucketObjectLockConfiguration",
+      "s3:GetLifecycleConfiguration",
     ]
     effect = "Allow"
     resources = [
@@ -74,11 +80,19 @@ data "aws_iam_policy_document" "github_actions_policy" {
       aws_iam_role.github_actions.arn
     ]
   }
+  statement {
+    actions = [
+      "sts:GetCallerIdentity"
+    ]
+    effect = "Allow"
+    resources = [
+      "*"
+    ]
+  }
 
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_s3_policy_attachment" {
   role       = aws_iam_role.github_actions.name
-#  policy_arn = aws_iam_policy.github_actions_policy.arn
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = aws_iam_policy.github_actions_policy.arn
 }
