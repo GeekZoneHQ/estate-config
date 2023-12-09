@@ -34,7 +34,6 @@ jobs:
 
       - uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: 1.5.0
           tofu_wrapper: false
           cli_config_credentials_token: ${{ secrets.TFE_ORG_TOKEN }}
 
