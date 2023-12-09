@@ -41,16 +41,14 @@ jobs:
         id: get_membermojo
         env:
           GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
+          MEMBERMOJO_EMAIL: ${{ secrets.MEMBERMOJO_EMAIL }}
+          MEMBERMOJO_PASSWORD: ${{ secrets.MEMBERMOJO_PASSWORD }}
         run: |
           echo ${{ secrets.MEMBERMOJO_COOKIE }} > cookies.txt
-          curl /
-            --cookie cookies.txt /
-            --cookie-jar cookies.txt /
-            --output signin.html /
-            --data 'email=${{ secrets.MEMBERMOJO_EMAIL }}&password=${{ secrets.MEMBERMOJO_PASSWORD }}' https://membermojo.co.uk/geekzone/signin_password
-          curl /
-            --cookie ${{ secrets.MEMBERMOJO_COOKIE }} /
-            --output members.csv https://membermojo.co.uk/geekzone/membership/download_members
+          grep -q "# Netscape HTTP Cookie File" cookies.txt
+          
+          curl --cookie cookies.txt --cookie-jar cookies.txt --output signin.html --data 'email=$MEMBERMOJO_EMAIL&password=$MEMBERMOJO_PASSWORD' https://membermojo.co.uk/geekzone/signin_password
+          curl --cookie cookies.txt --output members.csv https://membermojo.co.uk/geekzone/membership/download_members
           grep -q '"First name","Last name","Preferred Name"' members.csv
           
           gh secret set MEMBERMOJO_COOKIE --org ${{ github.repository_owner }} < cookies.txt
