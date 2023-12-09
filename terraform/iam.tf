@@ -45,6 +45,7 @@ data "aws_iam_policy_document" "github_actions_policy" {
       "s3:GetBucketAcl",
       "s3:PutBucketAcl",
       "s3:GetBucketCORS",
+      "s3:GetBucketWebsite",
     ]
     effect = "Allow"
     resources = [
@@ -61,6 +62,16 @@ data "aws_iam_policy_document" "github_actions_policy" {
       aws_iam_openid_connect_provider.github_oidc.arn
     ]
   }
+  statement {
+    actions = [
+      "iam:GetRole",
+    ]
+    effect = "Allow"
+    resources = [
+      aws_iam_role.github_actions.arn
+    ]
+  }
+
 }
 
 moved {
