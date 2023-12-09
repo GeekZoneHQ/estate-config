@@ -8,10 +8,10 @@ terraform {
       source = "hashicorp/aws"
       version = "5.30.0"
     }
-#    github = {
-#      source = "integrations/github"
-#      version = "5.42.0"
-#    }
+    github = {
+      source = "integrations/github"
+      version = "5.42.0"
+    }
 
 
   }
