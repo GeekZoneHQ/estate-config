@@ -73,6 +73,7 @@ jobs:
           gh secret set MEMBERMOJO_COOKIE --org ${{ github.repository_owner }} < cookies.txt
           
           python3 src/github_usernames_roles_current.py
+          rm members.csv
           
 
       - name: Build tofu Plan
@@ -80,6 +81,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
         run: |
           cd terraform
+          terraform login app.terraform.io
           tofu init
           tofu plan -no-color -out=tfplan
           tofu show -no-color -json tfplan > plan.json
