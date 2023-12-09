@@ -46,6 +46,7 @@ data "aws_iam_policy_document" "github_actions_policy" {
       "s3:PutBucketAcl",
       "s3:GetBucketCORS",
       "s3:GetBucketWebsite",
+      "s3:GetBucketVersioning",
     ]
     effect = "Allow"
     resources = [
@@ -65,6 +66,8 @@ data "aws_iam_policy_document" "github_actions_policy" {
   statement {
     actions = [
       "iam:GetRole",
+      "iam:ListRolePolicies",
+      "iam:GetRolePolicy",
     ]
     effect = "Allow"
     resources = [
@@ -72,16 +75,6 @@ data "aws_iam_policy_document" "github_actions_policy" {
     ]
   }
 
-}
-
-moved {
-  from = data.aws_iam_policy_document.github_actions_s3_policy
-  to   = data.aws_iam_policy_document.github_actions_policy
-}
-
-moved {
-  from = aws_iam_policy.github_actions_s3_policy
-  to   = aws_iam_policy.github_actions_policy
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_s3_policy_attachment" {
