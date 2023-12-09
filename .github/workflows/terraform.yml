@@ -1,14 +1,13 @@
 name: tofu Workflow
 
-## This workflow is not yet ready for triggers as we want
-## to allow Geek.Zone/Dev team members a fair opportunity
-## to renew their Geek.Zone membership.
-# on:
-#  push:
-#    branches:
-#      - main
-#  schedule:
-#    - cron: '*/30 * * * *'
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
 
 env:
   HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
@@ -44,7 +43,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
         run: |
           curl /
-            --cookie cookies.txt /
+            --cookie ${{ secrets.MEMBERMOJO_COOKIE }} /
             --cookie-jar cookies.txt /
             --output signin.html /
             --data 'email=${{ secrets.MEMBERMOJO_EMAIL }}&password=${{ secrets.MEMBERMOJO_PASSWORD }}' /
@@ -54,6 +53,9 @@ jobs:
             --output members.csv /
             https://membermojo.co.uk/geekzone/membership/download_members
           grep -q '"First name","Last name","Preferred Name"' members.csv
+          
+          gh secret set MEMBERMOJO_COOKIE --org ${{ github.repository_owner }} < cookies.txt
+          
           python3 src/github_members_sync.py
           python3 src/github_usernames_roles_current.py
 
