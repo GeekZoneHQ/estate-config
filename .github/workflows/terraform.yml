@@ -47,7 +47,12 @@ jobs:
           echo "${{ secrets.MEMBERMOJO_COOKIE }}" > cookies.txt
           echo "🍪 Checking for cookie"
           grep -q "# Netscape HTTP Cookie File" cookies.txt && echo "👍 Good cookie" || echo "❌ No cookie"
-          curl --version
+          echo "Checking for curl"
+          if ! curl --version; then
+            echo "curl not found"
+            exit 1
+          fi          
+          echo "👍 Found curl"
           
           echo "Running Curl to sign in"
           curl --cookie cookies.txt --cookie-jar cookies.txt --output signin.html --data "email=$MEMBERMOJO_EMAIL&password=$MEMBERMOJO_PASSWORD" https://membermojo.co.uk/geekzone/signin_password
@@ -65,8 +70,8 @@ jobs:
           echo "Updating Membermojo cookie in secrets"
           gh secret set MEMBERMOJO_COOKIE --org ${{ github.repository_owner }} < cookies.txt
           
-          python3 src/github_members_sync.py
           python3 src/github_usernames_roles_current.py
+          python3 src/github_members_sync.py
 
       - name: Build tofu Plan
         env:
