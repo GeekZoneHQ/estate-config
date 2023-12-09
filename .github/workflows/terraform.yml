@@ -90,7 +90,7 @@ jobs:
       - name: Build tofu Plan
         env:
           GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
-          TF_VAR_region: $AWS_REGION
+          TF_VAR_region: ${{ env.AWS_REGION }}
         run: |
           cd terraform
           tofu init \
