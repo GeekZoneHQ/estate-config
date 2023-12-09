@@ -95,5 +95,6 @@ data "aws_iam_policy_document" "github_actions_policy" {
 
 resource "aws_iam_role_policy_attachment" "github_actions_s3_policy_attachment" {
   role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_policy.arn
+#  policy_arn = aws_iam_policy.github_actions_policy.arn
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
