@@ -45,6 +45,8 @@ data "aws_iam_policy_document" "github_actions_s3_policy" {
       "s3:PutBucketPolicy",
       "s3:ListBucketVersions",
       "s3:GetObjectVersion",
+      "s3:GetBucketAcl",
+      "s3:PutBucketAcl",
     ]
     effect = "Allow"
     resources = [
