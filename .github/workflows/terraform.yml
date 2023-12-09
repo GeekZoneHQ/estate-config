@@ -45,7 +45,8 @@ jobs:
           MEMBERMOJO_PASSWORD: ${{ secrets.MEMBERMOJO_PASSWORD }}
         run: |
           echo "${{ secrets.MEMBERMOJO_COOKIE }}" > cookies.txt
-          grep -q "# Netscape HTTP Cookie File" cookies.txt
+          echo "🍪 Checking for cookie"
+          grep -q "# Netscape HTTP Cookie File" cookies.txt && echo "👍 Good cookie" || echo "❌ No cookie"
           curl --version
           
           echo "Running Curl to sign in"
@@ -53,7 +54,9 @@ jobs:
           
           echo "Running Curl to download members"
           curl --cookie cookies.txt --output members.csv https://membermojo.co.uk/geekzone/membership/download_members
-          grep -q '"First name","Last name","Preferred Name"' members.csv
+          
+          echo "💾 Checking for member data"
+          grep -q '"First name","Last name","Preferred Name"' members.csv && echo "👍 Good member data" || echo "❌ No member data"
           
           echo "Updating Membermojo cookie in secrets
           gh secret set MEMBERMOJO_COOKIE --org ${{ github.repository_owner }} < cookies.txt
