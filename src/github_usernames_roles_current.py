@@ -9,7 +9,7 @@ def extract_github_usernames_and_roles(file_path):
 
             # Extract GitHub Usernames and their roles
             github_usernames_and_roles = {
-                strip_github_username(row['GitHub Username']): 'owner' if row['GitHub Owner'].strip().lower() == 'yes' else 'member'
+                strip_github_username(row['GitHub Username']): 'admin' if row['GitHub Owner'].strip().lower() == 'yes' else 'member'
                 for row in csv_reader
                 if 'GitHub Username' in row and row['GitHub Username'].strip() != '' and
                    'GitHub Owner' in row and row['GitHub Owner'].strip() in ['yes', 'no']
@@ -36,9 +36,9 @@ def strip_github_username(username):
     return stripped_username
 
 
-file_path = 'members.csv'
+input_file = 'members.csv'
 output_file = 'github_usernames_roles.json'
-usernames_and_roles = extract_github_usernames_and_roles(file_path)
+usernames_and_roles = extract_github_usernames_and_roles(input_file)
 
 with open(output_file, 'w') as f:
     json.dump(usernames_and_roles, f)
