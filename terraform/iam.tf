@@ -40,7 +40,11 @@ data "aws_iam_policy_document" "github_actions_s3_policy" {
       "s3:ListBucket",
       "s3:GetObject",
       "s3:PutObject",
-      "s3:DeleteObject"
+      "s3:DeleteObject",
+      "s3:GetBucketPolicy",
+      "s3:PutBucketPolicy",
+      "s3:ListBucketVersions",
+      "s3:GetObjectVersion",
     ]
     effect = "Allow"
     resources = [
