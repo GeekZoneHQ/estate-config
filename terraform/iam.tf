@@ -1,4 +1,4 @@
-resource "aws_iam_role" "role" {
+resource "aws_iam_role" "github_actions" {
   name = var.aws_role_github_actions
 
   assume_role_policy = jsonencode({
@@ -19,4 +19,38 @@ resource "aws_iam_role" "role" {
     }],
     Version = "2012-10-17"
   })
+}
+
+moved {
+  from = aws_iam_role.role
+  to   = aws_iam_role.github_actions
+}
+
+
+resource "aws_iam_policy" "github_actions_s3_policy" {
+  name        = "GitHubActionsS3Policy"
+  description = "Policy for GitHub Actions role to access Terraform state bucket"
+
+  policy = data.aws_iam_policy_document.github_actions_s3_policy.json
+}
+
+data "aws_iam_policy_document" "github_actions_s3_policy" {
+  statement {
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject"
+    ]
+    effect = "Allow"
+    resources = [
+      aws_s3_bucket.state.arn,
+      "${aws_s3_bucket.state.arn}/*",
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_s3_policy_attachment" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_s3_policy.arn
 }
