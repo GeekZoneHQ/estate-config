@@ -21,20 +21,17 @@ resource "aws_iam_role" "github_actions" {
   })
 }
 
-moved {
-  from = aws_iam_role.role
-  to   = aws_iam_role.github_actions
-}
-
-
-resource "aws_iam_policy" "github_actions_s3_policy" {
-  name        = "GitHubActionsS3Policy"
+resource "aws_iam_policy" "github_actions_policy" {
+  name        = "GitHubActionsPolicy"
   description = "Policy for GitHub Actions role to access Terraform state bucket"
 
-  policy = data.aws_iam_policy_document.github_actions_s3_policy.json
+  policy = data.aws_iam_policy_document.github_actions_policy.json
 }
 
-data "aws_iam_policy_document" "github_actions_s3_policy" {
+data "aws_iam_policy_document" "github_actions_" {}
+
+
+data "aws_iam_policy_document" "github_actions_policy" {
   statement {
     actions = [
       "s3:ListBucket",
@@ -47,6 +44,7 @@ data "aws_iam_policy_document" "github_actions_s3_policy" {
       "s3:GetObjectVersion",
       "s3:GetBucketAcl",
       "s3:PutBucketAcl",
+      "s3:GetBucketCORS",
     ]
     effect = "Allow"
     resources = [
@@ -54,9 +52,28 @@ data "aws_iam_policy_document" "github_actions_s3_policy" {
       "${aws_s3_bucket.state.arn}/*",
     ]
   }
+  statement {
+    actions = [
+      "iam:GetOpenIDConnectProvider",
+    ]
+    effect = "Allow"
+    resources = [
+      aws_iam_openid_connect_provider.github_oidc.arn
+    ]
+  }
+}
+
+moved {
+  from = data.aws_iam_policy_document.github_actions_s3_policy
+  to   = data.aws_iam_policy_document.github_actions_policy
+}
+
+moved {
+  from = aws_iam_policy.github_actions_s3_policy
+  to   = aws_iam_policy.github_actions_policy
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_s3_policy_attachment" {
   role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_s3_policy.arn
+  policy_arn = aws_iam_policy.github_actions_policy.arn
 }
