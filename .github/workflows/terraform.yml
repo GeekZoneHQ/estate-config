@@ -97,7 +97,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
           TF_VAR_region: ${{ env.AWS_REGION }}
         run: |
-          cd tofu
+          cd terraform
           echo "tf Init"
           tofu init \
             -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
