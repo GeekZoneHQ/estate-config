@@ -1,6 +1,7 @@
 terraform {
   cloud {
     organization = "geekzone"
+    hostname = "app.terraform.io"
 
     workspaces {
       name = "estate-config"
