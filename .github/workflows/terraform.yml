@@ -71,7 +71,7 @@ jobs:
           gh secret set MEMBERMOJO_COOKIE --org ${{ github.repository_owner }} < cookies.txt
           
           python3 src/github_usernames_roles_current.py
-          python3 src/github_members_sync.py
+          
 
       - name: Build tofu Plan
         env:
