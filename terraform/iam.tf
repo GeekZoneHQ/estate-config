@@ -47,6 +47,7 @@ data "aws_iam_policy_document" "github_actions_policy" {
       "s3:GetBucketCORS",
       "s3:GetBucketWebsite",
       "s3:GetBucketVersioning",
+      "s3:GetAccelerateConfiguration",
     ]
     effect = "Allow"
     resources = [
@@ -68,6 +69,7 @@ data "aws_iam_policy_document" "github_actions_policy" {
       "iam:GetRole",
       "iam:ListRolePolicies",
       "iam:GetRolePolicy",
+      "iam:ListAttachedRolePolicies",
     ]
     effect = "Allow"
     resources = [
