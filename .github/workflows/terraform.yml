@@ -87,6 +87,8 @@ jobs:
                     
           python3 src/github_usernames_roles_current.py
           rm members.csv
+          
+          mv src/github_usernames_roles.json terraform/github_usernames_roles.json
 
 
       - name: Build tofu Plan
