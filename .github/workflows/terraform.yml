@@ -48,7 +48,12 @@ jobs:
         run: |
           echo "${{ secrets.MEMBERMOJO_COOKIE }}" > cookies.txt
           echo "🍪 Checking for cookie"
-          grep -q "# Netscape HTTP Cookie File" cookies.txt && echo "👍 Good cookie" || echo "❌ No cookie"
+          if ! grep -q "# Netscape HTTP Cookie File" cookies.txt; then
+            echo "❌ No cookie"
+            exit 1
+          fi
+          echo "👍 Good cookie"
+          
           echo "Checking for curl"
           if ! curl --version; then
             echo "curl not found"
@@ -86,12 +91,41 @@ jobs:
           tofu plan -no-color -out=tfplan
           tofu show -no-color -json tfplan > plan.json
 
-      - name: Setup Conftest
-        uses: instrumenta/conftest-action@master
-        with:
-          files: terraform/plan.json
-
-      - name: tofu Apply
+      - name: Upload Configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
         env:
           GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
-        run: tofu apply terraform/tfplan
+        id: plan-upload
+        with:
+          workspace: ${{ github.event.repository.name }}
+          directory: terraform
+          speculative: true
+
+      - name: Create Plan Run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
+        id: plan-run
+        with:
+          workspace: ${{ github.event.repository.name }}
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+          plan_only: false
+
+      - name: Create Apply Run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
+        id: apply-run
+        with:
+          workspace: ${{ github.event.repository.name }}
+          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
+
+      - name: Apply
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
+        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
+        id: apply
+        with:
+          run: ${{ steps.apply-run.outputs.run_id }}
+          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
