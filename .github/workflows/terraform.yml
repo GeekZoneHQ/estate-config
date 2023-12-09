@@ -1,7 +1,7 @@
 name: tofu Workflow
 
 on:
-  push:
+#  push:
 #    branches:
 #      - main
 #  schedule:
