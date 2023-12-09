@@ -47,7 +47,7 @@ jobs:
           echo ${{ secrets.MEMBERMOJO_COOKIE }} > cookies.txt
           grep -q "# Netscape HTTP Cookie File" cookies.txt
           curl --version
-          curl --cookie cookies.txt --cookie-jar cookies.txt --output signin.html --data 'email=$MEMBERMOJO_EMAIL&password=$MEMBERMOJO_PASSWORD' https://membermojo.co.uk/geekzone/signin_password
+          curl --cookie cookies.txt --cookie-jar cookies.txt --output signin.html --data "email=$MEMBERMOJO_EMAIL&password=$MEMBERMOJO_PASSWORD" https://membermojo.co.uk/geekzone/signin_password
           curl --cookie cookies.txt --output members.csv https://membermojo.co.uk/geekzone/membership/download_members
           grep -q '"First name","Last name","Preferred Name"' members.csv
           
