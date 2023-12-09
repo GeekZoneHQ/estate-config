@@ -1,25 +1,32 @@
 resource "aws_iam_role" "github_actions" {
   name = var.aws_role_github_actions
-
-  assume_role_policy = jsonencode({
-    Statement = [{
-      Action    = "sts:AssumeRoleWithWebIdentity",
-      Effect    = "Allow",
-      Principal = {
-        Federated = aws_iam_openid_connect_provider.github_oidc.arn
-      },
-      Condition = {
-        StringEquals = {
-          "token.actions.githubusercontent.com:aud" = var.oidc_audience
-        },
-        StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:${var.github_org}/*"
-        }
-      }
-    }],
-    Version = "2012-10-17"
-  })
+  assume_role_policy = data.aws_iam_policy_document.github_assume_role.json
 }
+
+data "aws_iam_policy_document" "github_assume_role" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "sts:AssumeRoleWithWebIdentity",
+    ]
+    principals {
+      type        = "Federated"
+      identifiers = [
+        aws_iam_openid_connect_provider.github_oidc.arn,
+      ]
+    }
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:sub"
+      values   = [
+        "repo:${var.github_org}/*",
+      ]
+
+    }
+  }
+}
+
+
 
 resource "aws_iam_policy" "github_actions_policy" {
   name        = "GitHubActionsPolicy"
@@ -29,6 +36,8 @@ resource "aws_iam_policy" "github_actions_policy" {
 }
 
 data "aws_iam_policy_document" "github_actions_policy" {
+
+  # S3 Actions
   statement {
     actions = [
       "s3:ListBucket",
@@ -59,31 +68,31 @@ data "aws_iam_policy_document" "github_actions_policy" {
       "${aws_s3_bucket.state.arn}/*",
     ]
   }
+
+  # IAM Actions
   statement {
     actions = [
       "iam:GetOpenIDConnectProvider",
-    ]
-    effect = "Allow"
-    resources = [
-      aws_iam_openid_connect_provider.github_oidc.arn
-    ]
-  }
-  statement {
-    actions = [
-      "iam:GetRole",
-      "iam:ListRolePolicies",
-      "iam:GetRolePolicy",
-      "iam:ListAttachedRolePolicies",
       "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:GetRole",
+      "iam:GetRolePolicy",
+      "iam:GetServiceLastAccessedDetails",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListRolePolicies",
     ]
     effect = "Allow"
     resources = [
-      aws_iam_role.github_actions.arn
+      aws_iam_openid_connect_provider.github_oidc.arn,
+      aws_iam_role.github_actions.arn,
     ]
   }
+
+  # STS actions
   statement {
     actions = [
-      "sts:GetCallerIdentity"
+      "sts:GetCallerIdentity",
+      "sts:AssumeRole",
     ]
     effect = "Allow"
     resources = [
@@ -91,10 +100,22 @@ data "aws_iam_policy_document" "github_actions_policy" {
     ]
   }
 
+  # KMS actions
+  statement {
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    effect = "Allow"
+    resources = [
+      "arn:aws:kms:*:${var.aws_account_id}:key/*",
+    ]
+  }
+
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_s3_policy_attachment" {
   role       = aws_iam_role.github_actions.name
-#  policy_arn = aws_iam_policy.github_actions_policy.arn
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = aws_iam_policy.github_actions_policy.arn
+#  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
