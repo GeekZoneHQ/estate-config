@@ -79,17 +79,7 @@ jobs:
           
           python3 src/github_usernames_roles_current.py
           rm members.csv
-          
 
-      - name: Build tofu Plan
-        env:
-          GITHUB_TOKEN: ${{ steps.create_token.outputs.token }}
-        run: |
-          cd terraform
-          terraform login app.terraform.io
-          tofu init
-          tofu plan -no-color -out=tfplan
-          tofu show -no-color -json tfplan > plan.json
 
       - name: Upload Configuration
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
