@@ -44,7 +44,7 @@ jobs:
           MEMBERMOJO_EMAIL: ${{ secrets.MEMBERMOJO_EMAIL }}
           MEMBERMOJO_PASSWORD: ${{ secrets.MEMBERMOJO_PASSWORD }}
         run: |
-          echo ${{ secrets.MEMBERMOJO_COOKIE }} > cookies.txt
+          echo "${{ secrets.MEMBERMOJO_COOKIE }}" > cookies.txt
           grep -q "# Netscape HTTP Cookie File" cookies.txt
           curl --version
           curl --cookie cookies.txt --cookie-jar cookies.txt --output signin.html --data "email=$MEMBERMOJO_EMAIL&password=$MEMBERMOJO_PASSWORD" https://membermojo.co.uk/geekzone/signin_password
