@@ -23,3 +23,7 @@ variable "aws_role_github_actions" {
   type = string
 }
 
+variable "aws_account_id" {
+  description = "The ID of our AWS account"
+  type = string
+}

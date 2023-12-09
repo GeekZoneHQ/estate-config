@@ -16,6 +16,7 @@ env:
   TF_VAR_github_org: ${{ github.repository_owner }}
   TF_VAR_aws_role_github_actions: ${{ secrets.AWS_ROLE_GITHUB_ACTIONS }}
   TF_VAR_state_bucket_name: ${{ secrets.TF_STATE_BUCKET }}
+  TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
 
 permissions:
   id-token: write
