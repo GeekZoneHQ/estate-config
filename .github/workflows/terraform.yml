@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/30 2-23 * * *'
   workflow_dispatch:
 
 
@@ -80,8 +80,8 @@ jobs:
           curl --cookie cookies.txt --output members.csv https://membermojo.co.uk/geekzone/membership/download_members
           
           echo "💾 Checking for member data"
-          if grep -q "<!DOCTYPE html>" members.csv; then
-            echo "Error: ❌ Downloaded file is an HTML error page"
+          if ! grep -q '"First name","Last name","Preferred Name"' members.csv; then
+            echo "Error: ❌ Could not find member data"
             exit 1
           fi
           echo "👍 Good member data"
