@@ -89,6 +89,13 @@ jobs:
           python3 src/github_usernames_roles_current.py
           rm members.csv
           
+          echo "Checking for jamesgeddes"
+          if ! grep -q "jamesgeddes" github_usernames_roles.json; then
+            echo "❌ Could not find jamesgeddes in the users file"
+            exit 1
+          fi
+          echo "👍 Found james"
+          
           mv github_usernames_roles.json terraform/github_usernames_roles.json
 
 
