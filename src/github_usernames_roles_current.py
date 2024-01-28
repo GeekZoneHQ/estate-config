@@ -1,18 +1,29 @@
 import csv
 import json
+import requests
+
+
+def is_valid_github_username(username):
+    response = requests.get(f"https://api.github.com/users/{username}")
+    return response.status_code == 200
 
 
 def extract_github_usernames_and_roles(file_path):
     try:
-        with open(file_path, mode='r', encoding='ISO-8859-1') as csv_file:
+        with open(file_path, mode="r", encoding="ISO-8859-1") as csv_file:
             csv_reader = csv.DictReader(csv_file)
 
             # Extract GitHub Usernames and their roles
             github_usernames_and_roles = {
-                strip_github_username(row['GitHub Username']): 'admin' if row['GitHub Owner'].strip().lower() == 'yes' else 'member'
+                strip_github_username(row["GitHub Username"]): "admin"
+                if row["GitHub Owner"].strip().lower() == "yes"
+                else "member"
                 for row in csv_reader
-                if 'GitHub Username' in row and row['GitHub Username'].strip() != '' and
-                   'GitHub Owner' in row and row['GitHub Owner'].strip() in ['yes', 'no']
+                if "GitHub Username" in row
+                and row["GitHub Username"].strip() != ""
+                and is_valid_github_username(row["GitHub Username"])
+                and "GitHub Owner" in row
+                and row["GitHub Owner"].strip() in ["yes", "no"]
             }
 
         return github_usernames_and_roles
@@ -32,15 +43,15 @@ def strip_github_username(username):
     stripped_username = username.strip().replace("@", "")
     github_url_prefix = "https://github.com/"
     if stripped_username.startswith(github_url_prefix):
-        return stripped_username[len(github_url_prefix):]
+        return stripped_username[len(github_url_prefix) :]
     return stripped_username
 
 
-input_file = 'members.csv'
-output_file = 'github_usernames_roles.json'
+input_file = "members.csv"
+output_file = "github_usernames_roles.json"
 usernames_and_roles = extract_github_usernames_and_roles(input_file)
 
-with open(output_file, 'w') as f:
+with open(output_file, "w") as f:
     json.dump(usernames_and_roles, f)
 
 print(f"GitHub Usernames and roles written to {output_file}")
