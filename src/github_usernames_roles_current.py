@@ -5,6 +5,8 @@ import requests
 
 def is_valid_github_username(username):
     response = requests.get(f"https://api.github.com/users/{username}")
+    print(f"user '{username}' returned status code {response.status_code}")
+
     return response.status_code == 200
 
 
