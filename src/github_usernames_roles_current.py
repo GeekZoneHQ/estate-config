@@ -23,7 +23,9 @@ def extract_github_usernames_and_roles(file_path):
                 for row in csv_reader
                 if "GitHub Username" in row
                 and row["GitHub Username"].strip() != ""
-                and is_valid_github_username(row["GitHub Username"])
+                and is_valid_github_username(
+                    strip_github_username(row["GitHub Username"])
+                )
                 and "GitHub Owner" in row
                 and row["GitHub Owner"].strip() in ["yes", "no"]
             }
