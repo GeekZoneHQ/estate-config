@@ -2,10 +2,17 @@ import csv
 import json
 from requests import get
 from time import sleep
+from os import getenv
+
+TOKEN = getenv("GITHUB_TOKEN")
 
 
 def is_valid_github_username(username):
-    headers = {"User-Agent": "geekzonehq"}
+    headers = {
+        "User-Agent": "geekzonehq",
+        "Authorization": f"Bearer {TOKEN}",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
     max_retries = 2
     for attempt in range(max_retries):
         response = get(url=f"https://api.github.com/users/{username}", headers=headers)
@@ -16,6 +23,8 @@ def is_valid_github_username(username):
         elif response.status_code == 403 and attempt < max_retries - 1:
             print("Received 403 response, waiting for 65 seconds before retrying...")
             sleep(65)
+        elif response.status_code == 403 and attempt >= max_retries:
+            raise Exception("Got auth exception")
         else:
             return False
 
