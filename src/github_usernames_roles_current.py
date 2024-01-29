@@ -1,13 +1,25 @@
 import csv
 import json
-import requests
+from requests import get
+from time import sleep
 
 
 def is_valid_github_username(username):
-    response = requests.get(f"https://api.github.com/users/{username}")
-    print(f"user '{username}' returned status code {response.status_code}")
+    headers = {"User-Agent": "geekzonehq"}
+    max_retries = 2
+    for attempt in range(max_retries):
+        response = get(url=f"https://api.github.com/users/{username}", headers=headers)
+        print(f"user '{username}' returned status code {response.status_code}")
 
-    return response.status_code == 200
+        if response.status_code == 200:
+            return True
+        elif response.status_code == 403 and attempt < max_retries - 1:
+            print("Received 403 response, waiting for 65 seconds before retrying...")
+            sleep(65)
+        else:
+            return False
+
+    return False
 
 
 def extract_github_usernames_and_roles(file_path):
