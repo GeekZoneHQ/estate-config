@@ -1,11 +1,11 @@
 name: tofu Workflow
 
 on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: '*/30 2-23 * * *'
+#  push:
+#    branches:
+#      - main
+#  schedule:
+#    - cron: '*/30 2-23 * * *'
   workflow_dispatch:
 
 
