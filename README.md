@@ -39,14 +39,8 @@
 [//]: # (REQUIRED)
 [//]: # (Delete as appropriate)
 
-1. Security
-1. Background
 1. Install
 1. Usage
-1. [Any extra sections as required]
-1. API
-1. Maintainers
-1. Thanks
 1. Contributing
 1. License
 
@@ -65,10 +59,13 @@
 [//]: # (OPTIONAL IF documentation repo)
 [//]: # (ELSE REQUIRED)
 
+Nothing to install as everything is performed in GitHub actions.
+
 ## Usage
 [//]: # (REQUIRED)
 [//]: # (Explain what the thing does. Use screenshots and/or videos.)
 
+Configures the estate using OpenTofu.
 
 [//]: # (Extra sections)
 [//]: # (OPTIONAL)
@@ -80,7 +77,7 @@ Membership of the Geek.Zone GitHub org is managed here. OpenTofu runs every 30 m
 - invite new members to our GitHub
 - remove former members from our GitHub
 
-You will receive an invite from GeekZoneBot. Accept it to continue!
+You will receive an invitation from GeekZoneBot. Accept it to continue!
 
 [//]: # (## API)
 [//]: # (OPTIONAL)
@@ -118,7 +115,7 @@ this project, please [become a sponsor](https://github.com/sponsors/GeekZoneHQ)!
 As a member of the
 [Open Source Initiative](https://opensource.org/osi-affiliate-membership),
 all our code & software, including that in this repo,
-is [free (libre) and open source](https://en.wikipedia.org/wiki/Free_and_open-source_software).
+is [free, libre, and open source](https://en.wikipedia.org/wiki/Free_and_open-source_software).
 
 - The license is the GNU General Public License v3.0.
 - The license owner is [Geek.Zone](http://Geek.Zone).
